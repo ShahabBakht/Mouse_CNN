@@ -157,9 +157,57 @@ class MouseNet(nn.Module):
                         re = torch.flatten(calc_graph[area], 1)
         return re
 
+    def get_img_feature_no_flatten(self, x, area_list):
+        """
+        function for get activations from a list of layers for input x
+        :param x: input image set Tensor with size (BN, C, SL, H, W) # following CPC standard
+        :param area_list: a list of area names
+        :return: if list length is 1, return the activation of that area; 
+                 if list length is >1, return concatenated activation of the areas along the channel axis.
+        """
+        area_list = self.param['output_area_list']
+        calc_graph = {}
+        for e in self.edge_bfs:
+            if e[0] == 'input':
+                if self.bn:
+                    calc_graph[e[1]] = nn.ReLU(inplace=True)(self.BNs[e[0]+e[1]](self.Convs[e[0]+e[1]](x)))
+                else:
+                    calc_graph[e[1]] = nn.ReLU(inplace=True)(self.Convs[e[0]+e[1]](x))
+            else:
+                if e[1] in calc_graph:
+                    if self.bn:
+                        calc_graph[e[1]] = calc_graph[e[1]] + nn.ReLU(inplace=True)(self.BNs[e[0]+e[1]](self.Convs[e[0]+e[1]](calc_graph[e[0]])))
+                    else:
+                        calc_graph[e[1]] = calc_graph[e[1]] + nn.ReLU(inplace=True)(self.Convs[e[0]+e[1]](calc_graph[e[0]]))
+                else:
+                    if self.bn:
+                        calc_graph[e[1]] = nn.ReLU(inplace=True)(self.BNs[e[0]+e[1]](self.Convs[e[0]+e[1]](calc_graph[e[0]])))
+                    else:
+                        calc_graph[e[1]] = nn.ReLU(inplace=True)(self.Convs[e[0]+e[1]](calc_graph[e[0]]))
+        if len(area_list) == 1:
+            return calc_graph['%s'%(area_list[0])]
+        else:
+            re = None
+            for area in area_list:
+                if area == 'VISp5':
+                    re=self.visp5_downsampler(calc_graph['VISp5'])
+                else:
+                    if re is not None:
+                        re = torch.cat([calc_graph[area], re], axis=1)
+                    else:
+                        re = calc_graph[area]
+        return re
     def forward(self, x):
-        x = self.get_img_feature(x, OUTPUT_AREAS)
-        x = self.classifier(x)
+        ''' 
+        input x shape follows CPC standards (BN, C, SL, H, W)
+        B: batch size, N: number of blocks, C: number of channels, SL: block size, H,W: image size
+        ''' 
+        (BN, C, SL, H, W) = x.shape
+        x = x.permute(0,2,1,3,4).contiguous().view((BN*SL,C,H,W))   
+        x = self.get_img_feature_no_flatten(x, OUTPUT_AREAS)
+        (T,C,H,W) = x.shape
+        x = x.view(BN,SL,C,H,W).permute(0,2,1,3,4)
+#         x = self.classifier(x)
         return x
 
     # def _initialize_weights(self):
