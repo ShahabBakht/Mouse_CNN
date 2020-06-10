@@ -165,7 +165,7 @@ class MouseNet(nn.Module):
         :return: if list length is 1, return the activation of that area; 
                  if list length is >1, return concatenated activation of the areas along the channel axis.
         """
-        area_list = self.param['output_area_list']
+        #area_list = self.param['output_area_list']
         calc_graph = {}
         for e in self.edge_bfs:
             if e[0] == 'input':
