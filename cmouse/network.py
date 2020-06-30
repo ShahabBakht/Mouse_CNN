@@ -6,6 +6,7 @@ from config import INPUT_SIZE, EDGE_Z
 import os
 import pickle
 import matplotlib.pyplot as plt
+import pandas
 
 class ConvParam:
     def __init__(self, in_channels, out_channels, gsh, gsw, out_sigma):
@@ -148,6 +149,29 @@ class Network:
         nx.draw(G, pos, node_size=node_size, node_color=node_color, edge_color=edge_color,alpha=0.4)
         nx.draw_networkx_labels(G, pos, node_label_dict, fontsize=1000,font_weight=640, alpha=0.7, font_color='black')
         nx.draw_networkx_edge_labels(G, pos, edge_label_dict, fontsize=2000, font_weight=640,alpha=0.7, font_color='red')
+        plt.show()
+
+    def draw_grad_graph(self, node_size=2000, node_color='yellow', edge_color='red'):
+        """
+        draw the network structure
+        """
+        grad_values = pandas.read_csv('/Users/shahab/Mila/Results/DeepMouse/TrainedModels/name.csv')
+        area_names = grad_values.area_name
+        
+        G, node_label_dict = self.make_graph()
+        edge_grad_dict = {}
+        for c in self.layers:
+            edge_name = c.source_name+c.target_name
+            which_idx = list(area_names==edge_name)
+            idx = [i for i, x in enumerate(which_idx) if x]
+            edge_grad = format(grad_values.grad_value[area_names==edge_name][idx[0]]*10,'.2f')            
+            edge_grad_dict[(c.source_name, c.target_name)] = (edge_grad)
+
+        plt.figure(figsize=(12,12))
+        pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
+        nx.draw(G, pos, node_size=node_size, node_color=node_color, edge_color=edge_color,alpha=0.4)
+        nx.draw_networkx_labels(G, pos, node_label_dict, fontsize=1000,font_weight=640, alpha=0.7, font_color='black')
+        nx.draw_networkx_edge_labels(G, pos, edge_grad_dict,fontsize=2000, font_weight=640,alpha=0.7, font_color='red')
         plt.show()  
 
 
