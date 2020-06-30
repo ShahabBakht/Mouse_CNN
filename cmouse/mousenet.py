@@ -94,7 +94,7 @@ class Conv3dMask(nn.Conv3d):
         """
         width = int(sigma*EDGE_Z)        
         x = np.arange(-width, width+1)
-        z = np.arange(-2,3)
+        z = np.arange(-1,2)
         Z, X, Y = np.meshgrid(x,z,x)
         radius = np.sqrt(Z**2 + X**2 + Y**2)
 
@@ -299,8 +299,8 @@ class MouseNet_3d(nn.Module):
         Gtop = nx.topological_sort(G)
         root = next(Gtop) # get root of graph
         self.edge_bfs = [e for e in nx.edge_bfs(G, root)] # traversal edges by bfs
-        temporal_kernel_size = 5
-        temporal_padding = 2
+        temporal_kernel_size = 3
+        temporal_padding = 1
 
         for e in self.edge_bfs:
             layer = network.find_conv_source_target(e[0], e[1])
