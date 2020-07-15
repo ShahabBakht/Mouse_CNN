@@ -736,12 +736,12 @@ if __name__ == "__main__":
     # plt.imshow(G.mask[0,0,:,:,1])
     # plt.savefig('test.png')
 
-    x = torch.rand((20, 3, 5, 64, 64))
+    x = torch.rand((40, 3, 5, 64, 64))
     import time
     import network
     net = network.load_network_from_pickle('../example/network_(3,64,64).pkl')
     tic = time.time()
-    # model = MouseNet(net)  
+    # model = MouseNet_3d(net)  
     # model = MouseNet(net)    
     model = MouseNetGRU(net)    
     out = model(x)
