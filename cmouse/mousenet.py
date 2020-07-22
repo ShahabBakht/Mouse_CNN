@@ -146,7 +146,10 @@ class ConvGRUCellMask(nn.Module):
     def forward(self, input_tensor, hidden_state):
         if hidden_state is None:
             B, C, *spatial_dim = input_tensor.size()
-            hidden_state = torch.zeros([B,self.hidden_size,*spatial_dim]).cuda()
+            if torch.cuda.is_available():
+                hidden_state = torch.zeros([B,self.hidden_size,*spatial_dim]).cuda()
+            else:
+                hidden_state = torch.zeros([B,self.hidden_size,*spatial_dim])
         # [B, C, H, W]
         combined = torch.cat([input_tensor, hidden_state], dim=1) #concat in C
         update = torch.sigmoid(self.update_gate(combined))
