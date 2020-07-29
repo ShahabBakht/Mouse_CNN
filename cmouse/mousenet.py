@@ -3,7 +3,7 @@ from torch import nn
 import networkx as nx
 import numpy as np
 from config import  INPUT_SIZE, EDGE_Z, OUTPUT_AREAS, HIDDEN_LINEAR, NUM_CLASSES
-import change_net_config
+from change_net_config import change_net_config
 
 class Conv2dMask(nn.Conv2d):
     """
