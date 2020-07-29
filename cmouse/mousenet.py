@@ -3,7 +3,7 @@ from torch import nn
 import networkx as nx
 import numpy as np
 from config import  INPUT_SIZE, EDGE_Z, OUTPUT_AREAS, HIDDEN_LINEAR, NUM_CLASSES
-from change_net_config import change_net_config
+from change_net_config import *
 
 class Conv2dMask(nn.Conv2d):
     """
@@ -335,6 +335,7 @@ class MouseNet(nn.Module):
             else:
                 if e[1] in calc_graph:
                     if self.bn:
+                        print(calc_graph[e[1]].shape)
                         calc_graph[e[1]] = calc_graph[e[1]] + nn.ReLU(inplace=True)(self.BNs[e[0]+e[1]](self.Convs[e[0]+e[1]](calc_graph[e[0]])))
                     else:
                         calc_graph[e[1]] = calc_graph[e[1]] + nn.ReLU(inplace=True)(self.Convs[e[0]+e[1]](calc_graph[e[0]]))
@@ -747,8 +748,8 @@ if __name__ == "__main__":
     net = network.load_network_from_pickle('../example/network_(3,64,64).pkl')
     tic = time.time()
     # model = MouseNet_3d(net)  
-    # model = MouseNet(net)    
-    model = MouseNetGRU(net)    
+    model = MouseNet(net)    
+    # model = MouseNetGRU(net)    
     out = model(x)
     print(time.time() - tic)
     import ipdb; ipdb.set_trace()

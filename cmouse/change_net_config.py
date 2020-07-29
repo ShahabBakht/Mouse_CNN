@@ -20,16 +20,21 @@ def change_net_config(net):
     for e in edge_bfs:
         layer = net.find_conv_source_target(e[0],e[1])
         params = layer.params
-        
+
         if params.kernel_size > max_kernel_size:
-            
+
             params.out_channels = int(np.round((params.kernel_size / max_kernel_size) * params.out_channels))
             params.kernel_size = max_kernel_size
             params.gsw = 4
+            if params.stride == 1:
+                params.padding = 4
+            elif params.stride == 2:
+                params.padding = (3,4,3,4)
+
             layer.params = params
 
         new_net.layers.append(layer)
-        print(e[0]+e[1],'kernel_size',params.kernel_size,'out_channels',params.out_channels)
+        print(e[0]+e[1],'kernel_size',params.kernel_size,'out_channels',params.out_channels, 'padding',params.padding)
 
     return new_net
 
