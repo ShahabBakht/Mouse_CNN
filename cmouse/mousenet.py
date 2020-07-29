@@ -335,7 +335,6 @@ class MouseNet(nn.Module):
             else:
                 if e[1] in calc_graph:
                     if self.bn:
-                        print(calc_graph[e[1]].shape)
                         calc_graph[e[1]] = calc_graph[e[1]] + nn.ReLU(inplace=True)(self.BNs[e[0]+e[1]](self.Convs[e[0]+e[1]](calc_graph[e[0]])))
                     else:
                         calc_graph[e[1]] = calc_graph[e[1]] + nn.ReLU(inplace=True)(self.Convs[e[0]+e[1]](calc_graph[e[0]]))

@@ -23,7 +23,7 @@ def change_net_config(net):
 
         if params.kernel_size > max_kernel_size:
 
-            params.out_channels = int(np.round((params.kernel_size / max_kernel_size) * params.out_channels))
+            # params.out_channels = int(np.round((params.kernel_size / max_kernel_size) * params.out_channels))
             params.kernel_size = max_kernel_size
             params.gsw = 4
             if params.stride == 1:
