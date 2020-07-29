@@ -26,7 +26,7 @@ def change_net_config(net):
             params.kernel_size = max_kernel_size
             layer.params = params
 
-        net.layers.append(layer)
+        new_net.layers.append(layer)
         print(e[0]+e[1],'kernel_size',params.kernel_size,'out_channels',params.out_channels)
 
     return new_net
@@ -35,3 +35,6 @@ if __name__ == "__main__":
     
     net = network.load_network_from_pickle('../example/network_(3,64,64).pkl')
     new_net = change_net_config(net)
+    G, _ = new_net.make_graph()
+    Gtop = nx.topological_sort(G)
+    root = next(Gtop)
