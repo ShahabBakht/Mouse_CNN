@@ -27,8 +27,7 @@ def change_net_config(net):
             params.kernel_size = max_kernel_size
             params.gsw = 4
             layer.params = params
-            
-        print(params.gsh, params.gsw)
+
         new_net.layers.append(layer)
         print(e[0]+e[1],'kernel_size',params.kernel_size,'out_channels',params.out_channels)
 
