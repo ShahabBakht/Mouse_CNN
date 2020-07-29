@@ -3,6 +3,7 @@ from torch import nn
 import networkx as nx
 import numpy as np
 from config import  INPUT_SIZE, EDGE_Z, OUTPUT_AREAS, HIDDEN_LINEAR, NUM_CLASSES
+import change_net_config
 
 class Conv2dMask(nn.Conv2d):
     """
@@ -229,6 +230,7 @@ class MouseNet(nn.Module):
         self.bn = bn
         if self.bn:
             self.BNs = nn.ModuleDict()
+        network = change_net_config(network)
         self.network = network
         
         G, _ = network.make_graph()
