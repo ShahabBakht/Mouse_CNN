@@ -230,7 +230,7 @@ class MouseNet(nn.Module):
         self.bn = bn
         if self.bn:
             self.BNs = nn.ModuleDict()
-        network = change_net_config(network)
+        # network = change_net_config(network)
         self.network = network
         
         G, _ = network.make_graph()
@@ -393,7 +393,8 @@ class MouseNetGRU(nn.Module):
         if self.bn:
             self.BNs = nn.ModuleDict()
         self.network = network
-        
+
+        network = change_net_config(network)
         G, _ = network.make_graph()
         Gtop = nx.topological_sort(G)
         root = next(Gtop) # get root of graph
