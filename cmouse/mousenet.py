@@ -237,13 +237,18 @@ class MouseNet(nn.Module):
         Gtop = nx.topological_sort(G)
         root = next(Gtop) # get root of graph
         self.edge_bfs = [e for e in nx.edge_bfs(G, root)] # traversal edges by bfs
-        
+        self.Convs['retina'] = nn.Conv2d(in_channels=3,out_channels=32,kernel_size=9,padding=4)
         for e in self.edge_bfs:
             layer = network.find_conv_source_target(e[0], e[1])
-            params = layer.params   
-
-            self.Convs[e[0]+e[1]] = Conv2dMask(params.in_channels, params.out_channels, params.kernel_size,
+            params = layer.params
+            
+            if e[0]=='input':
+                self.Convs[e[0]+e[1]] = Conv2dMask(32, params.out_channels, params.kernel_size,
                                                params.gsh, params.gsw, stride=params.stride, mask=mask, padding=params.padding)
+            else:
+                self.Convs[e[0]+e[1]] = Conv2dMask(params.in_channels, params.out_channels, params.kernel_size,
+                                               params.gsh, params.gsw, stride=params.stride, mask=mask, padding=params.padding)
+
             ## plotting Gaussian mask
             #plt.title('%s_%s_%sx%s'%(e[0].replace('/',''), e[1].replace('/',''), params.kernel_size, params.kernel_size))
             #plt.savefig('%s_%s'%(e[0].replace('/',''), e[1].replace('/','')))
@@ -329,8 +334,10 @@ class MouseNet(nn.Module):
         for e in self.edge_bfs:
             if e[0] == 'input':
                 if self.bn:
+                    x = self.Convs['retina'](x)
                     calc_graph[e[1]] = nn.ReLU(inplace=True)(self.BNs[e[0]+e[1]](self.Convs[e[0]+e[1]](x)))
                 else:
+                    x = self.Convs['retina'](x)
                     calc_graph[e[1]] = nn.ReLU(inplace=True)(self.Convs[e[0]+e[1]](x))
             else:
                 if e[1] in calc_graph:
@@ -394,7 +401,7 @@ class MouseNetGRU(nn.Module):
             self.BNs = nn.ModuleDict()
         self.network = network
 
-        network = change_net_config(network)
+        # network = change_net_config(network)
         G, _ = network.make_graph()
         Gtop = nx.topological_sort(G)
         root = next(Gtop) # get root of graph

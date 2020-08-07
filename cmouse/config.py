@@ -11,7 +11,7 @@ INPUT_GSH = 1 #Gaussian height of input to LGNv
 INPUT_GSW = 4 #Gaussian width of input to LGNv
 
 # OUTPUT_AREAS = ['VISp5']
-OUTPUT_AREAS = ['VISp5', 'VISl5', 'VISrl5', 'VISli5', 'VISpl5', 'VISal5', 'VISpor5']
+OUTPUT_AREAS = ['VISl5', 'VISrl5', 'VISli5', 'VISpl5', 'VISal5', 'VISpor5'] #'VISp5', 
 
 
 def get_output_shrinkage(area, depth):
