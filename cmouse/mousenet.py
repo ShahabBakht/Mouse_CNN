@@ -243,7 +243,7 @@ class MouseNet(nn.Module):
             params = layer.params
             
             if e[0]=='input':
-                self.Convs[e[0]+e[1]] = Conv2dMask(3, params.out_channels, params.kernel_size,
+                self.Convs[e[0]+e[1]] = Conv2dMask(32, params.out_channels, params.kernel_size,
                                                params.gsh, params.gsw, stride=params.stride, mask=mask, padding=params.padding)
             else:
                 self.Convs[e[0]+e[1]] = Conv2dMask(params.in_channels, params.out_channels, params.kernel_size,
