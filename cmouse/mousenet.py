@@ -237,8 +237,7 @@ class MouseNet(nn.Module):
         Gtop = nx.topological_sort(G)
         root = next(Gtop) # get root of graph
         self.edge_bfs = [e for e in nx.edge_bfs(G, root)] # traversal edges by bfs
-        self.Convs['retina1'] = nn.Conv2d(in_channels=3,out_channels=32,kernel_size=9,padding=4)
-        self.Convs['retina2'] = nn.Conv2d(in_channels=32,out_channels=3,kernel_size=9,padding=4)
+        self.Convs['retina'] = nn.Conv2d(in_channels=3,out_channels=32,kernel_size=9,padding=4)
         for e in self.edge_bfs:
             layer = network.find_conv_source_target(e[0], e[1])
             params = layer.params
@@ -335,8 +334,7 @@ class MouseNet(nn.Module):
         for e in self.edge_bfs:
             if e[0] == 'input':
                 if self.bn:
-                    x = self.Convs['retina1'](x)
-                    x = self.Convs['retina2'](x)
+                    x = self.Convs['retina'](x)
                     calc_graph[e[1]] = nn.ReLU(inplace=True)(self.BNs[e[0]+e[1]](self.Convs[e[0]+e[1]](x)))
                 else:
                     x = self.Convs['retina'](x)
