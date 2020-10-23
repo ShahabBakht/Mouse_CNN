@@ -25,9 +25,9 @@ class Conv2dMask(nn.Conv2d):
 
     def forward(self, input):
         if self.mask is not None:
-            return super(Conv2dMask, self).conv2d_forward(self.mypadding(input), self.weight*self.mask)
+            return super(Conv2dMask, self)._conv_forward(self.mypadding(input), self.weight*self.mask)
         else:
-            return super(Conv2dMask, self).conv2d_forward(self.mypadding(input), self.weight)
+            return super(Conv2dMask, self)._conv_forward(self.mypadding(input), self.weight)
             
     def make_gaussian_kernel_mask(self, peak, sigma):
         """
